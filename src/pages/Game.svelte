@@ -5,9 +5,10 @@
   import Chat from '~/components/Chat.svelte'
   import ChatList from '~/components/ChatList.svelte'
   import { chatStore } from '~/stores/chat'
+  import { clientStore } from '~/stores/client'
 
   let ws
-  const url = `ws://localhost:9000/ws/${params.id}/join/me`
+  const url = `ws://localhost:9000/ws/${params.id}/join/${$clientStore.name}`
 
   var onOpen = function () {
     console.log('OPEN!' + url)
