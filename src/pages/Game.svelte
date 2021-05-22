@@ -5,9 +5,6 @@
   export let params = {}
 </script>
 
-<div>
-  <button on:click={sendMsg}>게임</button>
-</div>
 <Game />
 <Chat id={params.id} />
 

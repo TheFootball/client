@@ -3,20 +3,19 @@
   import Text from '~/components/Text.svelte'
   import TextInput from '~/components/TextInput.svelte'
   import { push } from 'svelte-spa-router'
-
-  const onChange1 = (e) => {
-    value = e.target.value1
-  }
-  const onChange2 = (e) => {
-    value = e.target.value2
-  }
+  import { clientStore } from '~/stores/client'
 
   let value1 = ''
-  let value2 = ''
+  const onChange1 = (e) => {
+    value1 = e.target.value
+  }
+  const onChange2 = (e) => {
+    $clientStore.name = e.target.value
+  }
 
   const onClick = () => {
     try {
-      push(`/game/${value1}/${value2}`)
+      push(`/game/${value1}`)
     } catch (e) {
       console.log(e)
     }
@@ -26,8 +25,8 @@
 <div class="join">
   <div class="join__title-and-input">
     <Text size={82} color="orange">Join Room</Text>
-    <TextInput margin="39px 0 0 0" placeholder="Enter the room code" {onChange1} {value1} />
-    <TextInput margin="39px 0 0 0" placeholder="Enter yout name" {onChange2} {value2} />
+    <TextInput margin="39px 0 0 0" placeholder="Enter the room code" onChange={onChange1} value={value1} />
+    <TextInput margin="39px 0 0 0" placeholder="Enter yout name" onChange={onChange2} />
   </div>
   <div class="submit-button">
     <Button {onClick} bgColor="orange"><Text color="white">Join</Text></Button>

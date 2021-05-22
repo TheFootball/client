@@ -1,7 +1,9 @@
 <script>
   import { chatStore } from '~/stores/chat'
+  import { clientStore } from '~/stores/client'
   import ChatEntity from './ChatEntity.svelte'
   import Chat from '~/components/Chat.svelte'
+  import { onMount } from 'svelte'
 
   export let id
 
@@ -10,10 +12,11 @@
   // 유효한 채팅 서버로 보내주기
 
   let ws
-  const url = `ws://192.168.0.95:9000/ws/${id}/join/me`
+  const url = `ws://192.168.0.95:9000/ws/${id}/join/${$clientStore.name}`
 
-  var onOpen = function () {
+  var onOpen = function (event) {
     console.log('OPEN!' + url)
+    console.log(event)
   }
 
   var onClose = function () {
@@ -25,6 +28,7 @@
     console.log(event)
     $chatStore.push(event)
     $chatStore = $chatStore
+    // $clientStore = event
     // addMessage(data)
   }
 
@@ -115,6 +119,7 @@
         background-color: orange;
         color: white;
         border-radius: 8px;
+        cursor: pointer;
       }
     }
   }

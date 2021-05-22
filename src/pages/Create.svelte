@@ -7,6 +7,7 @@
   import { CREATE_ROOM } from '~/utils/endpoints'
   import { roomStore } from '~/stores/room'
   import { push } from 'svelte-spa-router'
+  import { clientStore } from '~/stores/client'
 
   let difficulty = 0
   let maxClients = 0
@@ -18,7 +19,7 @@
     difficulty = +e.target.value
   }
   const onChange3 = (e) => {
-    name = e.target.value
+    $clientStore.name = e.target.value
   }
 
   const onClick = async () => {
@@ -58,7 +59,7 @@
       onChange={onChange2}
       value={difficulty}
     />
-    <TextInput margin="39px 0 0 0" placeholder="Enter your name" onChange={onChange3} value={name} />
+    <TextInput margin="39px 0 0 0" placeholder="Enter your name" onChange={onChange3} value={$clientStore.name} />
   </div>
   <div class="submit-button">
     <Button bgColor="orange" {onClick}><Text color="white">Create</Text></Button>
