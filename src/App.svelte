@@ -1,9 +1,10 @@
 <script>
-  import Game from '~/components/Game.svelte'
+  import Router from 'svelte-spa-router'
+  import routes from './routes'
 </script>
 
 <main>
-  <Game />
+  <Router {routes} />
 </main>
 
 <style lang="scss">
