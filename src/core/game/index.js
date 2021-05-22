@@ -12,11 +12,12 @@ export default function startGame(width, height) {
   let animals = []
 
   class Attacker {
-    constructor(x, y, speed, img) {
+    constructor(x, y, speed, img, id) {
       this.x = x
       this.y = y
       this.speed = speed
       this.img = img
+      this.id = id
     }
 
     draw() {
@@ -30,10 +31,11 @@ export default function startGame(width, height) {
   let avoiderImage
 
   class Avoider {
-    constructor(x, y, speed) {
+    constructor(x, y, speed, id) {
       this.x = x
       this.y = y
       this.speed = speed
+      this.id = id
     }
 
     draw() {
@@ -67,9 +69,8 @@ export default function startGame(width, height) {
 
       const dist = Math.hypot(avoider.x - attacker.x, avoider.y - attacker.y)
 
-      if (dist - 50 < 1) {
+      if (dist - 35 < 1) {
         console.log('게임끝')
-
         cancelAnimationFrame(frameId)
       }
     }

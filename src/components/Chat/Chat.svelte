@@ -1,9 +1,57 @@
 <script>
-  import App from '../../App.svelte'
+  import { chatStore } from '~/stores/chat'
+  import ChatEntity from './ChatEntity.svelte'
+  import Chat from '~/components/Chat.svelte'
+
+  export let id
 
   // 소켓온 후 누가 들어왓다 띄우기
   // 피하는 사람 위치 변화
   // 유효한 채팅 서버로 보내주기
+
+  let ws
+  const url = `ws://192.168.0.95:9000/ws/${id}/join/me`
+
+  var onOpen = function () {
+    console.log('OPEN!' + url)
+  }
+
+  var onClose = function () {
+    console.log('CLOSED!' + url)
+    ws = null
+  }
+
+  var onMessage = function (event) {
+    console.log(event)
+    $chatStore.push(event)
+    $chatStore = $chatStore
+    // addMessage(data)
+  }
+
+  var onError = function (event) {
+    alert(event.type)
+  }
+
+  const open = function () {
+    ws = new WebSocket(url)
+    ws.onopen = onOpen
+    ws.onclose = onClose
+    ws.onmessage = onMessage
+    ws.onerror = onError
+  }
+
+  var sendMsg = function () {
+    ws.send(
+      JSON.stringify({
+        event: 'chat',
+        data: JSON.stringify({}),
+      }),
+    )
+  }
+
+  onMount(() => {
+    open()
+  })
 </script>
 
 <div class="chat">
@@ -11,10 +59,14 @@
     <div>Junction X Seoul 2021</div>
     <img src="./assets/images/close.svg" />
   </div>
-  <div class="chat-content">sdsd</div>
+  <div class="chat-content">
+    {#each $chatStore as chat}
+      <Chat {chat} />
+    {/each}
+  </div>
   <div class="chat-input">
     <textarea />
-    <button>send</button>
+    <button on:click={sendMsg}>send</button>
   </div>
 </div>
 
