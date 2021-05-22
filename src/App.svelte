@@ -3,9 +3,7 @@
   import routes from './routes'
 </script>
 
-<main>
-  <Router {routes} />
-</main>
+<Router {routes} />
 
 <style lang="scss">
 </style>

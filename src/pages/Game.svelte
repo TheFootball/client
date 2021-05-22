@@ -1,4 +1,5 @@
 <script>
+  import Game from '~/components/Game.svelte'
   export let params = {}
   import { onMount } from 'svelte'
   import Chat from '~/components/Chat.svelte'
@@ -54,5 +55,7 @@
   <ChatList />
   <button on:click={sendMsg}>게임</button>
 </div>
+
+<Game />
 
 <style></style>
