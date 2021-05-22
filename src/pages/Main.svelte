@@ -13,7 +13,7 @@ import { go } from "~/utils/router";
             </div>
 
             <div class="main__center-buttons">
-                <Button onClick={go("/create-room")}>
+                <Button onClick={go("/create")}>
                     <Text size={27}>Create Room</Text>
                 </Button>
                 <div class="divider"/>
