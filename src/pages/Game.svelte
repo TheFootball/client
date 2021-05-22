@@ -1,6 +1,7 @@
 <script>
+  import Game from '~/components/Game.svelte'
 </script>
 
-<div>게임</div>
+<Game />
 
 <style></style>
