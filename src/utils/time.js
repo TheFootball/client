@@ -10,3 +10,7 @@ export const unixSecondToDate = (num) => {
 export const getCalendar = (date) => {
   return dayjs(date).calendar()
 }
+
+export const formatDate = (date) => {
+  return dayjs(date).format('YYYY-MM-DD')
+}

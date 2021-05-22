@@ -1,42 +1,45 @@
 <script>
   import { chatStore } from '~/stores/chat'
   import { clientStore } from '~/stores/client'
-  import ChatEntity from './ChatEntity.svelte'
-  import Chat from '~/components/Chat.svelte'
-  import { onMount } from 'svelte'
+  import { roomStore } from '~/stores/room'
+  import ChatEntity from '~/components/Chat/ChatEntity.svelte'
+  import { onMount, onDestroy } from 'svelte'
+  import { formatDate } from '~/utils/time'
 
-  export let id
-
-  // 소켓온 후 누가 들어왓다 띄우기
-  // 피하는 사람 위치 변화
-  // 유효한 채팅 서버로 보내주기
+  let chatInput = ''
+  let chatList
 
   let ws
-  const url = `ws://192.168.0.95:9000/ws/${id}/join/${$clientStore.name}`
+  const url = `ws://192.168.0.95:9000/ws/${$roomStore.code}/join/${$clientStore.name}`
 
-  var onOpen = function (event) {
+  const onOpen = (event) => {
     console.log('OPEN!' + url)
     console.log(event)
   }
 
-  var onClose = function () {
+  const onClose = () => {
     console.log('CLOSED!' + url)
     ws = null
   }
 
-  var onMessage = function (event) {
+  const onMessage = (event) => {
     console.log(event)
-    $chatStore.push(event)
-    $chatStore = $chatStore
-    // $clientStore = event
-    // addMessage(data)
+    const data = JSON.parse(event.data)
+    if (data.event === 'chat') {
+      $chatStore.push(JSON.parse(data.data))
+      $chatStore = $chatStore
+      console.log($chatStore)
+    } else {
+      console.log(data)
+      $clientStore = data
+    }
   }
 
-  var onError = function (event) {
+  const onError = (event) => {
     alert(event.type)
   }
 
-  const open = function () {
+  const open = () => {
     ws = new WebSocket(url)
     ws.onopen = onOpen
     ws.onclose = onClose
@@ -44,17 +47,27 @@
     ws.onerror = onError
   }
 
-  var sendMsg = function () {
+  const sendMsg = () => {
     ws.send(
       JSON.stringify({
         event: 'chat',
-        data: JSON.stringify({}),
+        data: JSON.stringify({
+          name: `${$clientStore.Name}`,
+          content: chatInput,
+          timeStamp: new Date().getTime() / 1000,
+        }),
       }),
     )
+    chatInput = ''
+    chatList.scrollTo(0, 900)
   }
 
   onMount(() => {
     open()
+  })
+
+  onDestroy(() => {
+    ws.close()
   })
 </script>
 
@@ -63,13 +76,13 @@
     <div>Junction X Seoul 2021</div>
     <img src="./assets/images/close.svg" />
   </div>
-  <div class="chat-content">
+  <div class="chat-content" bind:this={chatList}>
     {#each $chatStore as chat}
-      <Chat {chat} />
+      <ChatEntity name={chat.name} time={formatDate(new Date(chat.timeStamp * 1000))} content={chat.content} />
     {/each}
   </div>
   <div class="chat-input">
-    <textarea />
+    <textarea bind:value={chatInput} />
     <button on:click={sendMsg}>send</button>
   </div>
 </div>
@@ -95,7 +108,8 @@
     }
     .chat-content {
       padding: 52px 35px;
-      height: 70%;
+      height: 500px;
+      overflow: scroll;
     }
     .chat-input {
       display: flex;
