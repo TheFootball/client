@@ -47,6 +47,8 @@ export default function startGame(width, height) {
   let frameId = 0
 
   let avoider = ''
+
+  // 소켓
   function render() {
     frameId = requestAnimationFrame(render)
     context.clearRect(0, 0, canvas.width, canvas.height)
