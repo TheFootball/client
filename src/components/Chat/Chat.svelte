@@ -67,6 +67,7 @@
   })
 
   onDestroy(() => {
+    $chatStore = []
     ws.close()
   })
 </script>

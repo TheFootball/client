@@ -4,10 +4,11 @@
   import TextInput from '~/components/TextInput.svelte'
   import { push } from 'svelte-spa-router'
   import { clientStore } from '~/stores/client'
+  import { roomStore } from '~/stores/room'
 
   let value1 = ''
   const onChange1 = (e) => {
-    value1 = e.target.value
+    $roomStore.code = e.target.value
   }
   const onChange2 = (e) => {
     $clientStore.name = e.target.value
@@ -15,7 +16,7 @@
 
   const onClick = () => {
     try {
-      push(`/game/${value1}`)
+      push(`/game/${$roomStore.code}`)
     } catch (e) {
       console.log(e)
     }

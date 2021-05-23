@@ -10,7 +10,7 @@
 </script>
 
 <div class="notion">
-  <button on:click={gameGo}>겜시작</button>
+  <button on:click={gameGo}>start</button>
   <div class="add">추가</div>
 </div>
 

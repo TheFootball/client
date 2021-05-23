@@ -4,7 +4,6 @@ export default function startGame(width, height) {
   canvas.height = height
   let backgroundImg
   const context = canvas.getContext('2d')
-  context.fillStyle = "url('')"
   const addButton = document.querySelector('.add')
 
   const attackerArray = []
@@ -17,7 +16,7 @@ export default function startGame(width, height) {
       this.y = y
       this.speed = speed
       this.img = img
-      this.id = id
+      this.id = id // 자신의 것인지 확인하는 멤버변수
     }
 
     draw() {
@@ -64,8 +63,11 @@ export default function startGame(width, height) {
         continue
       } else {
         attacker.y += 2
+        // 소켓으로 메시지가 온 경우 id에 해당하는 attacker의 X값을 변화시킴
         attacker.draw()
       }
+
+      // 자신의 캐릭터일때 반짝반짝 넣기
 
       const dist = Math.hypot(avoider.x - attacker.x, avoider.y - attacker.y)
 
@@ -98,12 +100,13 @@ export default function startGame(width, height) {
       }
 
       if (imageCount === 5) {
-        avoider = new Avoider(0, height - 200, 100)
+        avoider = new Avoider(width / 2, height - 200, 100)
         render()
       }
     })
   })
 
+  // 자신이 방장?인 경우만 키보드로 조작 가능
   window.addEventListener('keydown', (e) => {
     if (e.key === 'l') {
       avoider.x -= 15
