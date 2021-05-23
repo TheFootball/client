@@ -36,7 +36,9 @@
         difficulty,
         maxClients,
       })
-      roomStore.set(data)
+
+      console.log('방정보', data)
+      roomStore.set({ ...data, isHost: true })
       push(`/game/${data.code}/`)
     } catch (e) {
       console.log(e)
