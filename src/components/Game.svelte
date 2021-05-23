@@ -63,6 +63,7 @@
     chatList.scrollTo(0, 900)
   }
 
+  export let copyElement
   const gameGo = async () => {
     await tick()
     const canvas = document.querySelector('canvas')
@@ -216,6 +217,12 @@
       attackerArray.push(new Attacker(x, y, speed, animals[Math.floor(Math.random() * 4)]))
     })
   }
+  const copyCode = () => {
+    copyElement.focus()
+    copyElement.select()
+    document.execCommand('copy')
+    alert('Copy Success!')
+  }
 </script>
 
 {#if $roomStore.isHost}
@@ -239,8 +246,32 @@
 <style lang="scss">
   .notion {
     position: absolute;
+    display: flex;
+    flex-direction: column;
     top: 0;
     left: 0;
+    padding: 24px;
+    .roomcode {
+      width: 16px;
+      height: 16px;
+      opacity: 0;
+    }
+    button {
+      box-shadow: 0px 4px 4px 0px #00000033;
+      width: 48px;
+      height: 48px;
+      border-radius: 100%;
+      background-color: white;
+      border: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      &:not(:last-child) {
+        margin-bottom: 12px;
+      }
+    }
   }
   .game {
     display: flex;
