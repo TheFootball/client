@@ -13,7 +13,7 @@
     copyElement.focus()
     copyElement.select()
     document.execCommand('copy')
-    alert('복사완료')
+    alert('Copy Success!')
   }
 </script>
 
