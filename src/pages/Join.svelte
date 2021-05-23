@@ -16,7 +16,8 @@
 
   const onClick = () => {
     try {
-      push(`/game/${$roomStore.code}`)
+      roomStore.set({ ...$roomStore, isHost: false })
+      push(`/game/${$roomStore.code}/`)
     } catch (e) {
       console.log(e)
     }

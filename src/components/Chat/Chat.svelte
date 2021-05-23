@@ -23,15 +23,16 @@
   }
 
   const onMessage = (event) => {
-    console.log(event)
     const data = JSON.parse(event.data)
+    const { isHost, content } = JSON.parse(data.data)
+    if (isHost && ['left', 'right'].includes(content)) {
+      return
+    }
     if (data.event === 'chat') {
       $chatStore.push(JSON.parse(data.data))
       $chatStore = $chatStore
-      console.log($chatStore)
     } else {
-      console.log(data)
-      $clientStore = data
+      $clientStore = { ...data, name: data.Name }
     }
   }
 
@@ -52,9 +53,10 @@
       JSON.stringify({
         event: 'chat',
         data: JSON.stringify({
-          name: `${$clientStore.Name}`,
+          name: `${$clientStore.name}`,
           content: chatInput,
           timeStamp: new Date().getTime() / 1000,
+          isHost: `${$roomStore.isHost}`,
         }),
       }),
     )
