@@ -11,7 +11,6 @@
 
   let difficulty = 0
   let maxClients = 0
-  let name = ''
   const onChange1 = (e) => {
     maxClients = +e.target.value
   }
