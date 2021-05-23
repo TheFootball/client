@@ -18,10 +18,13 @@
 </script>
 
 <div class="notion">
-  <button on:click={gameGo}>start</button>
-  <button on:click={copyCode}>copy room code</button>
+  <button on:click={gameGo}>
+    <img src="/assets/images/play.svg" alt="" />
+  </button>
+  <button on:click={copyCode}>
+    <img src="/assets/images/copy.svg" alt="" />
+  </button>
   <textarea readonly bind:this={copyElement} type="text" class="roomcode">{$roomStore.code}</textarea>
-  <div class="add">추가</div>
 </div>
 
 <div class="game">
@@ -38,11 +41,31 @@
 <style lang="scss">
   .notion {
     position: absolute;
+    display: flex;
+    flex-direction: column;
     top: 0;
     left: 0;
+    padding: 24px;
     .roomcode {
+      width: 16px;
       height: 16px;
       opacity: 0;
+    }
+    button {
+      box-shadow: 0px 4px 4px 0px #00000033;
+      width: 48px;
+      height: 48px;
+      border-radius: 100%;
+      background-color: white;
+      border: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      &:not(:last-child) {
+        margin-bottom: 12px;
+      }
     }
   }
   .game {
