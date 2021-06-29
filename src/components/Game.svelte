@@ -1,69 +1,19 @@
 <script>
   import { tick } from 'svelte'
-  // import startGame from '~/core/game'
-  import Chat from '~/components/Chat/Chat.svelte'
   import { clientStore } from '~/stores/client'
   import { roomStore } from '~/stores/room'
   import { chatStore } from '~/stores/chat'
-  import { onMount, onDestroy } from 'svelte'
+  import { onDestroy } from 'svelte'
+  import Chat from '~/components/Chat/Chat.svelte'
+  import { IN_GAME, Socket } from '~/utils/websocket'
 
-  let ws
-  const url = `ws://192.168.0.95:9000/ws/${$roomStore.code}/join/${$clientStore.name}`
-
-  const onOpen = (event) => {
-    console.log('OPEN!' + url)
-    console.log(event)
-  }
-
-  const onClose = () => {
-    console.log('CLOSED!' + url)
-    ws = null
-  }
-
-  const onMessage = (event) => {
-    // 여기서 온다 - 적절한 처리
-    console.log(event)
-    const data = JSON.parse(event.data)
-    console.log(data)
-  }
-
-  const onError = (event) => {
-    alert(event.type)
-  }
-
-  const open = () => {
-    ws = new WebSocket(url)
-    ws.onopen = onOpen
-    ws.onclose = onClose
-    ws.onmessage = onMessage
-    ws.onerror = onError
-  }
-
-  onMount(() => {
-    open()
-  })
+  const socket = new Socket(IN_GAME($roomStore.roomId, $clientStore.name))
 
   onDestroy(() => {
+    socket.ws.onclose()
     $chatStore = []
-    ws.close()
   })
 
-  const sendMsg = () => {
-    ws.send(
-      JSON.stringify({
-        event: 'chat',
-        data: JSON.stringify({
-          name: `${$clientStore.Name}`,
-          content: chatInput,
-          timeStamp: new Date().getTime() / 1000,
-        }),
-      }),
-    )
-    chatInput = ''
-    chatList.scrollTo(0, 900)
-  }
-
-  export let copyElement
   const gameGo = async () => {
     await tick()
     const canvas = document.querySelector('canvas')
@@ -217,12 +167,13 @@
       attackerArray.push(new Attacker(x, y, speed, animals[Math.floor(Math.random() * 4)]))
     })
   }
-  const copyCode = () => {
-    copyElement.focus()
-    copyElement.select()
-    document.execCommand('copy')
-    alert('Copy Success!')
-  }
+  // export let copyElement
+  // const copyCode = () => {
+  //   copyElement.focus()
+  //   copyElement.select()
+  //   document.execCommand('copy')
+  //   alert('Copy Success!')
+  // }
 </script>
 
 {#if $roomStore.isHost}

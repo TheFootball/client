@@ -8,7 +8,7 @@
 
   let value1 = ''
   const onChange1 = (e) => {
-    $roomStore.code = e.target.value
+    $roomStore.roomId = e.target.value
   }
   const onChange2 = (e) => {
     $clientStore.name = e.target.value
@@ -17,7 +17,7 @@
   const onClick = () => {
     try {
       roomStore.set({ ...$roomStore, isHost: false })
-      push(`/game/${$roomStore.code}/`)
+      push(`/game/${$roomStore.roomId}/`)
     } catch (e) {
       console.log(e)
     }

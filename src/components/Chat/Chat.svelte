@@ -3,74 +3,37 @@
   import { clientStore } from '~/stores/client'
   import { roomStore } from '~/stores/room'
   import ChatEntity from '~/components/Chat/ChatEntity.svelte'
-  import { onMount, onDestroy } from 'svelte'
-  import { formatDate } from '~/utils/time'
+  import { onDestroy } from 'svelte'
+  import { unixNanoToDaytime } from '~/utils/time'
+  import { IN_GAME, Socket } from '~/utils/websocket'
 
   let chatInput = ''
   let chatList
 
-  let ws
-  const url = `ws://192.168.0.95:9000/ws/${$roomStore.code}/join/${$clientStore.name}`
-
-  const onOpen = (event) => {
-    console.log('OPEN!' + url)
-    console.log(event)
-  }
-
-  const onClose = () => {
-    console.log('CLOSED!' + url)
-    ws = null
-  }
-
-  const onMessage = (event) => {
-    const data = JSON.parse(event.data)
-    const { isHost, content } = JSON.parse(data.data)
-    if (isHost && ['left', 'right'].includes(content)) {
-      return
-    }
-    if (data.event === 'chat') {
-      $chatStore.push(JSON.parse(data.data))
-      $chatStore = $chatStore
-    } else {
-      $clientStore = { ...data, name: data.Name }
-    }
-  }
-
-  const onError = (event) => {
-    alert(event.type)
-  }
-
-  const open = () => {
-    ws = new WebSocket(url)
-    ws.onopen = onOpen
-    ws.onclose = onClose
-    ws.onmessage = onMessage
-    ws.onerror = onError
-  }
+  const socket = new Socket(IN_GAME($roomStore.roomId, $clientStore.name))
 
   const sendMsg = () => {
-    ws.send(
-      JSON.stringify({
-        event: 'chat',
-        data: JSON.stringify({
-          name: `${$clientStore.name}`,
-          content: chatInput,
-          timeStamp: new Date().getTime() / 1000,
-          isHost: `${$roomStore.isHost}`,
-        }),
-      }),
-    )
+    if (chatInput.trim().length === 0) return
+    socket.send(chatInput.trim())
     chatInput = ''
     chatList.scrollTo(0, 900)
   }
 
-  onMount(() => {
-    open()
-  })
+  const onMessage = (e) => {
+    const data = JSON.parse(e.data)
+    console.log(data)
+    if (data.messageType === 'chat') $chatStore = [...$chatStore, data]
+  }
+
+  const onEnter = (e) => {
+    if (e.key === 'Enter') sendMsg()
+  }
+
+  socket.ws.onmessage = onMessage
 
   onDestroy(() => {
     $chatStore = []
-    ws.close()
+    socket.ws.onclose()
   })
 </script>
 
@@ -81,11 +44,11 @@
   </div>
   <div class="chat-content" bind:this={chatList}>
     {#each $chatStore as chat}
-      <ChatEntity name={chat.name} time={formatDate(new Date(chat.timeStamp * 1000))} content={chat.content} />
+      <ChatEntity name={chat.sender} time={unixNanoToDaytime(chat.timestamp)} content={chat.message} />
     {/each}
   </div>
   <div class="chat-input">
-    <textarea bind:value={chatInput} />
+    <textarea on:keyup={onEnter} bind:value={chatInput} />
     <button on:click={sendMsg}>send</button>
   </div>
 </div>

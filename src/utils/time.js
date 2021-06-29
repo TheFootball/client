@@ -11,6 +11,6 @@ export const getCalendar = (date) => {
   return dayjs(date).calendar()
 }
 
-export const formatDate = (date) => {
-  return dayjs(date).format('YYYY-MM-DD')
+export const unixNanoToDaytime = (nano) => {
+  return dayjs(Math.floor(nano / 1000000)).format('A hh:mm:ss')
 }

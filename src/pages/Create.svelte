@@ -1,46 +1,30 @@
 <script>
   import Button from '~/components/Button.svelte'
   import Text from '~/components/Text.svelte'
-  import NumberInput from '~/components/NumberInput.svelte'
   import TextInput from '~/components/TextInput.svelte'
   import { api } from '~/utils/api'
-  import { CREATE_ROOM } from '~/utils/endpoints'
+  import { ROOM } from '~/utils/endpoints'
   import { roomStore } from '~/stores/room'
   import { push } from 'svelte-spa-router'
   import { clientStore } from '~/stores/client'
 
-  let difficulty = 0
-  let maxClients = 0
-  const onChange1 = (e) => {
-    maxClients = +e.target.value
+  let roomId = ''
+  const onChangeRoomId = (e) => {
+    roomId = e.target.value
   }
-  const onChange2 = (e) => {
-    difficulty = +e.target.value
-  }
-  const onChange3 = (e) => {
+  const onChangeHostname = (e) => {
     $clientStore.name = e.target.value
   }
 
   const onClick = async () => {
-    if (difficulty > 3 || difficulty < 1) {
-      alert('The difficulty level must be between 1 and 3.')
-      return
-    }
-    if (maxClients > 100 || maxClients < 50) {
-      alert('The maxClients must be between 50 and 100.')
-      return
-    }
     try {
-      const { data } = await api.post(CREATE_ROOM, {
-        difficulty,
-        maxClients,
-      })
+      const { data } = await api.post(ROOM(roomId), {}, { params: { username: $clientStore.name } })
 
-      console.log('방정보', data)
-      roomStore.set({ ...data, isHost: true })
-      push(`/game/${data.code}/`)
+      console.log('방정보', data.room)
+      roomStore.set({ ...data.room, isHost: true })
+      push(`/game/${data.room.roomId}/`)
     } catch (e) {
-      console.log(e)
+      console.log(e.response || e)
     }
   }
 </script>
@@ -48,19 +32,13 @@
 <div class="join">
   <div class="join__title-and-input">
     <Text size={82} color="orange">Create Room</Text>
-    <NumberInput
+    <TextInput margin="39px 0 0 0" placeholder="Enter the room ID" onChange={onChangeRoomId} value={roomId} />
+    <TextInput
       margin="39px 0 0 0"
-      placeholder="Enter the Max Participants (50 ~ 100)"
-      onChange={onChange1}
-      value={maxClients}
+      placeholder="Enter your name"
+      onChange={onChangeHostname}
+      value={$clientStore.name}
     />
-    <NumberInput
-      margin="39px 0 0 0"
-      placeholder="Enter the Difficulty Level (1 ~ 3)"
-      onChange={onChange2}
-      value={difficulty}
-    />
-    <TextInput margin="39px 0 0 0" placeholder="Enter your name" onChange={onChange3} value={$clientStore.name} />
   </div>
   <div class="submit-button">
     <Button bgColor="orange" {onClick}><Text color="white">Create</Text></Button>

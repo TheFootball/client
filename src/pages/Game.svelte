@@ -7,7 +7,7 @@
   export let params
 
   onMount(() => {
-    if ($roomStore.code === undefined) {
+    if ($roomStore.roomId === undefined) {
       push('/')
     }
   })
