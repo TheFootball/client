@@ -1,3 +1,4 @@
+import { messageFactory, messageType } from '~/core/chat/chat'
 import { WS_URL } from './config'
 import { ROOM } from './endpoints'
 
@@ -44,6 +45,14 @@ export class Socket {
   }
 
   send(msg) {
+    const json = messageFactory(msg, messageType.chat)
+    this.ws.send(json)
+  }
+
+  command(c) {
+    if (!['start'].includes(c)) throw new Error('invalid command')
+
+    const msg = messageFactory(c, messageType.command)
     this.ws.send(msg)
   }
 }
