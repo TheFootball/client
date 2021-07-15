@@ -131,7 +131,7 @@
         console.log(e)
         if (e.key === 'ArrowLeft') {
           avoider.x -= 15
-          ws.send(
+          socket.send(
             JSON.stringify({
               event: 'chat',
               data: JSON.stringify({
@@ -145,7 +145,7 @@
         } else if (e.key === 'ArrowRight') {
           avoider.x += 15
           console.log($clientStore, '이르무머임ㄴ')
-          ws.send(
+          socket.send(
             JSON.stringify({
               event: 'chat',
               data: JSON.stringify({
