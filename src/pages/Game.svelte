@@ -10,10 +10,19 @@
 
   export let params
 
+  let isGameStart = false // to Store
+
   const onMessage = (e) => {
     const data = JSON.parse(e.data)
     console.log(data)
-    if (data.messageType === 'chat') $chatStore = [...$chatStore, data]
+    if (data.messageType === 'chat') {
+      $chatStore = [...$chatStore, data]
+      if (data.message === 'start') {
+        isGameStart = true
+      } else if (data.message === 'finish') {
+        isGameStart = false
+      }
+    }
   }
 
   const socket = new Socket(IN_GAME($roomStore.roomId, $clientStore.name), onMessage)
@@ -31,7 +40,7 @@
 </script>
 
 <div class="game">
-  <Game {socket} />
+  <Game {socket} {isGameStart} />
   <Chat {socket} />
 </div>
 
