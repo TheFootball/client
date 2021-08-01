@@ -3,16 +3,8 @@
   import { clientStore } from '~/stores/client'
   import { roomStore } from '~/stores/room'
   import { chatStore } from '~/stores/chat'
-  import { onDestroy } from 'svelte'
-  import Chat from '~/components/Chat/Chat.svelte'
-  import { IN_GAME, Socket } from '~/utils/websocket'
 
-  const socket = new Socket(IN_GAME($roomStore.roomId, $clientStore.name))
-
-  onDestroy(() => {
-    socket.ws.onclose()
-    $chatStore = []
-  })
+  export let socket
 
   const gameGo = async () => {
     await tick()
@@ -160,6 +152,7 @@
       })
     }
 
+    // 여기를 채팅 시작 첬을때 어태커 나오는거 시작
     addButton.addEventListener('click', () => {
       const x = width / 2
       const y = 0
@@ -182,17 +175,11 @@
     <div class="add">추가</div>
   </div>
 {/if}
-
-<div class="game">
-  <canvas
-    width={Math.floor(innerWidth * 0.7)}
-    height={innerHeight}
-    style="background: url('./assets/images/background.svg');margin:0"
-  />
-  <div class="chatting-wrapper">
-    <Chat />
-  </div>
-</div>
+<canvas
+  width={Math.floor(innerWidth * 0.7)}
+  height={innerHeight}
+  style="background: url('./assets/images/background.svg');margin:0"
+/>
 
 <style lang="scss">
   .notion {
@@ -222,12 +209,6 @@
       &:not(:last-child) {
         margin-bottom: 12px;
       }
-    }
-  }
-  .game {
-    display: flex;
-    .chatting-wrapper {
-      width: 31%;
     }
   }
 </style>

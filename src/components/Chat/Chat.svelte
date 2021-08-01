@@ -1,40 +1,23 @@
 <script>
-  import { chatStore } from '~/stores/chat'
-  import { clientStore } from '~/stores/client'
-  import { roomStore } from '~/stores/room'
   import ChatEntity from '~/components/Chat/ChatEntity.svelte'
-  import { onDestroy } from 'svelte'
   import { unixNanoToDaytime } from '~/utils/time'
-  import { IN_GAME, Socket } from '~/utils/websocket'
+  import { chatStore } from '~/stores/chat'
+
+  export let socket
 
   let chatInput = ''
-  let chatList
-
-  const socket = new Socket(IN_GAME($roomStore.roomId, $clientStore.name))
+  let chatListRef = null
 
   const sendMsg = () => {
     if (chatInput.trim().length === 0) return
     socket.send(chatInput.trim())
     chatInput = ''
-    chatList.scrollTo(0, 900)
-  }
-
-  const onMessage = (e) => {
-    const data = JSON.parse(e.data)
-    console.log(data)
-    if (data.messageType === 'chat') $chatStore = [...$chatStore, data]
+    chatListRef.scrollTo(0, 900)
   }
 
   const onEnter = (e) => {
     if (e.key === 'Enter') sendMsg()
   }
-
-  socket.ws.onmessage = onMessage
-
-  onDestroy(() => {
-    $chatStore = []
-    socket.ws.onclose()
-  })
 </script>
 
 <div class="chat">
@@ -42,7 +25,7 @@
     <div>Junction X Seoul 2021</div>
     <img src="./assets/images/close.svg" />
   </div>
-  <div class="chat-content" bind:this={chatList}>
+  <div class="chat-content" bind:this={chatListRef}>
     {#each $chatStore as chat}
       <ChatEntity name={chat.sender} time={unixNanoToDaytime(chat.timestamp)} content={chat.message} />
     {/each}
@@ -55,6 +38,7 @@
 
 <style lang="scss">
   .chat {
+    width: 30%;
     display: flex;
     flex-direction: column;
     height: 100%;

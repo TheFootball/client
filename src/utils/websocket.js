@@ -11,13 +11,6 @@ const onClose = (url) => () => {
   console.log('CLOSED!' + url)
 }
 
-const onMessage = (event) => {
-  // 여기서 온다 - 적절한 처리
-  console.log(event)
-  const data = JSON.parse(event.data)
-  console.log(data)
-}
-
 const onError = (event) => {
   alert(event.type)
 }
@@ -26,7 +19,7 @@ export const IN_GAME = (roomId, username) => WS_URL + ROOM(roomId) + `?username=
 export class Socket {
   static singletons = {}
 
-  constructor(url) {
+  constructor(url, onMessage) {
     if (Socket.singletons[url]) return Socket.singletons[url]
     this.url = url
     this.ws = new WebSocket(url)
